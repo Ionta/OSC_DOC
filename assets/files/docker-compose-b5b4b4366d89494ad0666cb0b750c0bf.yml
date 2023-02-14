@@ -1,0 +1,52 @@
+version: '2.4'
+services:
+    osc:
+        image: arhimest/oscreator:latest
+        environment:
+          ASPNETCORE_URLS: "http://*:8030"
+          DB_HOST: postgres_osc
+          DB_PORT: 5432
+          DB_NAME: osc_system
+          DB_USER: admin
+          DB_PASSWORD: пароль от базы
+          DB_GLOBAL_HOST: postgres_osc
+          DB_GLOBAL_PORT: 5432
+          DB_GLOBAL_NAME: osc_global
+          DB_GLOBAL_USER: admin
+          DB_GLOBAL_PASSWORD: пароль от базы
+          Auth__Issure: OSC
+          Auth__Audience: OSC
+          Auth__Secret: секретный код для админки
+          Auth__TokenLifeTime: 360
+          Secret: "введите секретнвй код"
+          CRM_URL:
+        restart: on-failure
+        ports:
+          - "8030:8030"
+        labels:
+          NAME: "osc"
+        depends_on:
+          postgres_osc:
+            condition: service_started
+        networks:
+          - osc
+          
+    postgres_osc:
+        image: postgres:13
+        environment:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: пароль от базы
+          POSTGRES_DB: osc_system
+        volumes:
+           - oscdata:/var/lib/postgresql/data
+        ports:
+          - "5433:5432"
+        labels:
+          NAME: "postgres"
+        networks:
+          - osc
+volumes:
+  oscdata:
+networks:
+  osc:
+   
